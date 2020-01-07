@@ -1,7 +1,7 @@
 import WebSocket from "isomorphic-ws";
 import fetch from "isomorphic-fetch";
 import EventEmitter from "./EventEmitter";
-import {randomKey, getHMACHeaders} from "./utils";
+import { randomKey, getHMACHeaders } from "./utils";
 
 const readyStates = ["CONNECTING", "OPEN", "CLOSING", "CLOSED"];
 
@@ -9,6 +9,7 @@ interface ClientOptions {
     readonly key: string;
     readonly secret?: string;
     readonly public?: boolean;
+    readonly host?: string;
 }
 
 type Interval = "Tick" | "S5" | "S10" | "M2" | "M5" | "M10" | "M15" | "M30" | "H1" | "H2" | "H4" | "H8" | "H12" | "D1";
@@ -156,6 +157,7 @@ type OrderSubmitCallback = (error: string, order: Order) => void;
 class Client extends EventEmitter {
     private key?: string;
     private secret?: string;
+    private host?: string;
 
     connected: boolean = false;
 
@@ -175,6 +177,7 @@ class Client extends EventEmitter {
         super();
         this.key = options.key;
         this.secret = options.secret;
+        this.host = options.host || "wss://sockets.cloud9trader.com";
         if (this.key && !this.secret) {
             throw "[ERROR] Please provide API secret for private connections";
         }
@@ -190,20 +193,20 @@ class Client extends EventEmitter {
         }
 
         if (this.secret) {
-            this.socket = new WebSocket(process.env.SOCKETS_HOST, {
+            this.socket = new WebSocket(this.host, {
                 headers: {
                     ...getHMACHeaders(this.key, this.secret, "/")
                 }
             });
         } else {
-            this.socket = new WebSocket(process.env.SOCKETS_HOST);
+            this.socket = new WebSocket(this.host);
         }
 
         this.socket.addEventListener("open", this.onConnect.bind(this));
         this.socket.addEventListener("close", this.onDisconnect.bind(this));
         this.socket.addEventListener("message", this.onMessage.bind(this));
 
-        this.socket.addEventListener("error", (error) => {
+        this.socket.addEventListener("error", error => {
             this.emit("status", "Error");
             let message;
             if (error.message === "Unexpected server response: 401") {
@@ -250,7 +253,7 @@ class Client extends EventEmitter {
         return this.connected;
     }
 
-    private onMessage(event: {data: any}) {
+    private onMessage(event: { data: any }) {
         let topic, args;
         try {
             [topic, ...args] = JSON.parse(event.data);
@@ -341,7 +344,7 @@ class Client extends EventEmitter {
         }
         // Beware of listeners on the prototype that will match across instances resulting in one unsubscribe removing all
         // Declare the listener in the constructor, e.g. this.listener = this.listener.bind(this) or use an arrow function assigned to a class property
-        this.subscriptions[topic] = this.subscriptions[topic].filter((existing) => existing !== listener);
+        this.subscriptions[topic] = this.subscriptions[topic].filter(existing => existing !== listener);
         if (this.subscriptions[topic].length === 0) {
             delete this.subscriptions[topic];
             if (!this.autoSubscribed.includes(topic)) {
@@ -365,7 +368,7 @@ class Client extends EventEmitter {
     private resetSubscriptions() {
         if (this.connected) return;
         Object.entries(this.subscriptions).forEach(([topic, listeners]) => {
-            listeners.forEach((listener) => {
+            listeners.forEach(listener => {
                 this.off(topic, listener);
                 this.subscribe(topic, listener);
             });
@@ -396,5 +399,5 @@ class Client extends EventEmitter {
     }
 }
 
-export {Client};
+export { Client };
 export default Client;

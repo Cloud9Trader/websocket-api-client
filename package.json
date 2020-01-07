@@ -1,6 +1,6 @@
 {
     "name": "@cloud9trader/websocket-api-client",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "Client adaptor for Cloud9Trader's realtime API for use in web browsers and NodeJS",
     "main": "dist/main.js",
     "module": "dist/main.js",
