@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "baseUrl": ".",
+        "outDir": "./dist",
+        "target": "ES5",
+        "module": "ES2015",
+        "moduleResolution": "node",
+        "declaration": true,
+        "allowSyntheticDefaultImports": true
+    },
+    "include": ["./src/**/*"]
+}

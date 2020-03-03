@@ -10,7 +10,7 @@ export const randomKey = (length?: number) => {
     return string.join("");
 };
 
-export const getHMACHeaders = (key, secret, path, data?) => {
+export const getHMACHeaders = (key: string, secret: string, path: string, data?: any) => {
     const crypto = require("crypto");
     const buffer = Buffer.from(secret, "base64");
     const hmac = crypto.createHmac("sha256", buffer);

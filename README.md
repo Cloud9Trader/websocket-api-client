@@ -1,12 +1,12 @@
 # @cloud9trader/websocket-api-client
 
-> ⚠️ Cloud9Trader is currently being upgraded. This library is currently only available for early access. Check back soon.
-
 A JavaScript client adaptor for [Cloud9Trader](https://www.cloud9trader.com)'s realtime API for use in web browsers and NodeJS.
 
-Cloud9Trader is a web platform that connects to a growing number of Forex brokers and Cryptocurency exchanges, providing a single API for pricing and trading to power your interfaces and trading algorithms.
+Cloud9Trader is a web platform that connects to a growing number of Forex brokers and Cryptocurrency exchanges, providing a single API for pricing and trading to power your interfaces and trading algorithms.
 
-If you are developing in languages other than JavaScript you can consume the API directly with native WebSockets. Please visit the [WebSocket API Documentation](https://www.cloud9trader.com/documentation/cloud9trader-api/websocket-api)
+Cloud9Trader's API allows you to stream market data and trade with Binance, Bitfinex, BitMEX, HitBTC, FXCM, OANDA and a growing number of exchanges. We've smoothed over the various implementations to provide a simple to use API so that you can write your application code once to communicate across the multiple exchanges.
+
+If you are developing in languages other than JavaScript you can consume the API directly with native WebSockets. Please visit the [WebSocket API Documentation](https://www.cloud9trader.com/documentation/cloud9trader-api/websocket-api).
 
 ## Getting Started
 
@@ -16,10 +16,16 @@ For use in NodeJS or Webpack builds:
 npm i @cloud9trader/websocket-api-client
 ```
 
-For use in browser and with AMD:
+For use in browser as global:
 
 ```
-<script src="http://unpkg.com/@cloud9trader/websocket-api-client@^0/dist/main.js"></script> (TODO link)
+<script src="https://unpkg.com/@cloud9trader/websocket-api-client@^0/dist/global.js"></script>
+```
+
+For use in browser with AMD:
+
+```
+<script src="https://unpkg.com/@cloud9trader/websocket-api-client@^0/dist/umd.js"></script>
 ```
 
 ## Authentication
@@ -37,12 +43,14 @@ const Cloud9TraderClient = require("@cloud9trader/websocket-api-client").Client;
 // or ES Modules / TypeScript
 import { Cloud9TraderClient } from "@cloud9trader/websocket-api-client";
 
+// Cloud9Trader is available on the global scope in vanilla browser environments, ie.
+const Cloud9TraderClient = Cloud9Trader.Client;
+
 // or AMD
 define(..., ["@cloud9trader/websocket-api-client"], (Cloud9TraderClient) => {
    ...
 });
 
-// Cloud9TraderClient is available on the global scope in vanilla browser environments
 ```
 
 ## Initialization
@@ -50,7 +58,7 @@ define(..., ["@cloud9trader/websocket-api-client"], (Cloud9TraderClient) => {
 ```js
 const client = new Cloud9TraderClient({
   key: <API KEY>,
-  secret: <API SECRET> // NodeJS only, not for use in browsers
+  secret: <API SECRET> // NodeJS only, not for use publicly in browsers
 })
 
 client.start()
@@ -63,12 +71,12 @@ client.start()
 -   `options` {object}
 
     -   `key` {string} Public API key
-    -   `secret` {string} Private API secret (NodeJS / server side only)
+    -   `secret` {string} Optional. Private API secret (NodeJS / server side only)
 
 ```js
 const client = new Cloud9TraderClient({
   key: <API KEY>,
-  secret: <API SECRET> // NodeJS only, not for use in browsers
+  secret: <API SECRET> // NodeJS only, not for use publicly in browsers
 })
 ```
 
@@ -87,7 +95,7 @@ client.on("connected", () => {
 Emits human friendly socket status messages.
 
 ```js
-client.on("status", (status) => {
+client.on("status", status => {
     console.info("Cloud9Trader connection status is:", status);
 });
 ```
@@ -99,7 +107,7 @@ Emitted on socket error and error message from server.
 -   `error` {Error} | {string}
 
 ```js
-client.on("error", (error) => {
+client.on("error", error => {
     console.error("Cloud9Trader socket error:", error);
 });
 ```
@@ -111,7 +119,7 @@ Incoming messages for topic subscriptions are emitted as events.
 -   `data` {any}
 
 ```js
-client.on("balances", (balances) => {
+client.on("balances", balances => {
     console.info("Received balances update from Cloud9Trader", balances);
 });
 ```
@@ -165,7 +173,7 @@ Subscribes to updates for a topic. Visit the [WebSocket API Documentation](https
 -   `listener` {Function} Listener function
 
 ```js
-client.subscribe("balances", (data) => {
+client.subscribe("balances", data => {
     console.info("Received a balances update from Cloud9Trader", data);
 });
 ```

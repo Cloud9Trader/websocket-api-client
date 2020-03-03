@@ -1,0 +1,9 @@
+{
+    "useTabs": false,
+    "printWidth": 200,
+    "tabWidth": 4,
+    "singleQuote": false,
+    "trailingComma": "none",
+    "noSemi": true,
+    "rcVerbose": true
+}

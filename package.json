@@ -1,6 +1,6 @@
 {
     "name": "@cloud9trader/websocket-api-client",
-    "version": "0.0.7",
+    "version": "0.0.19",
     "description": "Client adaptor for Cloud9Trader's realtime API for use in web browsers and NodeJS",
     "main": "dist/main.js",
     "module": "dist/main.js",
@@ -8,10 +8,9 @@
     "types": "dist/main.d.ts",
     "scripts": {
         "prepublish": "npm run build",
-        "build": "tsc",
-        "bundle": "rollup dist/main.js --file dist/bundle.js --format iife --compact",
-        "build2": "rollup -c",
-        "watch": "rollup -c -w"
+        "build": "tsc && npm run build-global && npm run build-umd",
+        "build-global": "rollup dist/main.js --file dist/global.js --format iife --compact --output.name Cloud9Trader",
+        "build-umd": "rollup dist/main.js --file dist/umd.js --format umd --compact --name Cloud9Trader"
     },
     "repository": {
         "type": "git",
@@ -21,6 +20,7 @@
     "license": "ISC",
     "dependencies": {
         "@babel/polyfill": "^7.4.4",
+        "@types/isomorphic-fetch": "0.0.35",
         "@types/ws": "^6.0.1",
         "isomorphic-fetch": "^2.2.1",
         "isomorphic-ws": "^4.0.1",
@@ -36,6 +36,7 @@
         "typescript": "^3.5.1"
     },
     "files": [
-        "dist"
+        "dist",
+        "dist.browser"
     ]
 }

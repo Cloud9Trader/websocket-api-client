@@ -8,7 +8,6 @@ const readyStates = ["CONNECTING", "OPEN", "CLOSING", "CLOSED"];
 interface ClientOptions {
     readonly key: string;
     readonly secret?: string;
-    readonly public?: boolean;
     readonly host?: string;
 }
 
@@ -175,22 +174,22 @@ class Client extends EventEmitter {
 
     constructor(options: ClientOptions) {
         super();
+        if (!options) {
+            throw "[ERROR] Please pass options object to constructor";
+        }
         this.key = options.key;
         this.secret = options.secret;
         this.host = options.host || "wss://sockets.cloud9trader.com";
-        if (this.key && !this.secret) {
-            throw "[ERROR] Please provide API secret for private connections";
+        if (!this.key) {
+            throw "[ERROR] Please provide API key";
         }
-        if (this.secret && !this.key) {
-            throw "[ERROR] Please provide API key for private connections";
+        if (this.secret && typeof window === "object" && window.navigator) {
+            throw "[ERROR] Cloud9Trader client will not initiate private connections from the browser. Do not share your API keys. Remove the secret from options for public connections";
         }
     }
 
     start() {
         if (this.socket) return;
-        if (this.secret && typeof window === "object" && window.navigator) {
-            throw "[ERROR] Cloud9Trader client cannot initiate private connections from the browser. Do not share your API keys. Remove key and secret from options for public connections";
-        }
 
         if (this.secret) {
             this.socket = new WebSocket(this.host, {
@@ -199,7 +198,7 @@ class Client extends EventEmitter {
                 }
             });
         } else {
-            this.socket = new WebSocket(this.host);
+            this.socket = new WebSocket(this.host + "?key=" + this.key);
         }
 
         this.socket.addEventListener("open", this.onConnect.bind(this));
@@ -258,7 +257,7 @@ class Client extends EventEmitter {
         try {
             [topic, ...args] = JSON.parse(event.data);
         } catch (error) {
-            return console.error("[ERROR] Cloud9Trader socket could not parse incoming message");
+            return console.error("[ERROR] Cloud9Trader socket could not parse incoming message", event.data);
         }
         this.emit(topic, ...args);
     }
@@ -283,7 +282,7 @@ class Client extends EventEmitter {
     }
 
     fetchInstruments(callback?: InstrumentsCallback) {
-        return this.fetchHTTP("/api/v1/instruments", callback);
+        return this.fetchHTTP("https://www.cloud9trader.com/api/v1/instruments", callback);
     }
 
     fetchHistoricalPrice(instrumentId: string, interval: Interval, startDate: Date | string, endDate?: Date | string, callback?: Function) {
