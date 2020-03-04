@@ -1,10 +1,10 @@
 {
     "name": "@cloud9trader/websocket-api-client",
-    "version": "0.0.19",
+    "version": "0.0.22",
     "description": "Client adaptor for Cloud9Trader's realtime API for use in web browsers and NodeJS",
-    "main": "dist/main.js",
+    "main": "dist/umd.js",
     "module": "dist/main.js",
-    "browser": "dist/main.js",
+    "browser": "dist/global.js",
     "types": "dist/main.d.ts",
     "scripts": {
         "prepublish": "npm run build",
@@ -28,11 +28,6 @@
     },
     "devDependencies": {
         "rollup": "^1.13.1",
-        "rollup-plugin-babel": "^4.3.2",
-        "rollup-plugin-commonjs": "^10.0.0",
-        "rollup-plugin-node-resolve": "^5.0.1",
-        "rollup-plugin-typescript": "^1.0.1",
-        "tslib": "^1.9.3",
         "typescript": "^3.5.1"
     },
     "files": [

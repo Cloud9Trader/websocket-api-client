@@ -160,6 +160,8 @@ class Client extends EventEmitter {
 
     connected: boolean = false;
 
+    static Client = Client;
+
     private socket!: WebSocket;
 
     private reconnectAttempts: number = 0;
@@ -399,4 +401,5 @@ class Client extends EventEmitter {
 }
 
 export { Client };
+export { Client as Cloud9TraderClient };
 export default Client;

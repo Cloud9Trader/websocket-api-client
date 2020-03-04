@@ -41,7 +41,7 @@ Ensure that you keep your API key secret and **do not serve it on your websites*
 const Cloud9TraderClient = require("@cloud9trader/websocket-api-client").Client;
 
 // or ES Modules / TypeScript
-import { Cloud9TraderClient } from "@cloud9trader/websocket-api-client";
+import Cloud9TraderClient from "@cloud9trader/websocket-api-client";
 
 // Cloud9Trader is available on the global scope in vanilla browser environments, ie.
 const Cloud9TraderClient = Cloud9Trader.Client;
